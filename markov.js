@@ -1,22 +1,6 @@
 var fs = require('fs');
-var filename = 'corpus.txt';
-var startingWords = 'MP';
-var maxLengthChar = 500;
 
-//{w1 : [w2, w2, w3], w2 : [w3, w1, w5]}
-
-var categorisedWords = {}
-
-fs.readFile(filename, 'utf8', function(err, data) {
-  if (err) throw err;
-
-    categoriseWords(splitContentToWords(data));
-    var startingLastWordArray = startingWords.split(" ");
-    var startingLastWord = startingLastWordArray[startingLastWordArray.length - 1].toLowerCase();
-
-    var content = generateMarkovOutputWithWord(startingLastWord, '');
-    console.log(content);
-});
+var categorisedWords = {} //{w1 : [w2, w2, w3], w2 : [w3, w1, w5]}
 
 function splitContentToWords(content) {
     var words = content
@@ -53,12 +37,27 @@ function generateNextWordForWord(word) {
         return '';
 }
 
-function generateMarkovOutputWithWord(word, currentOutput) {
+function generateMarkovOutputWithWord(word, currentOutput, maxLengthChar) {
     if(word == '' || currentOutput.length > maxLengthChar)
         return currentOutput;
 
-    currentOutput += (' ' + word);
+    if(currentOutput.length == 0)
+        currentOutput += word;
+    else
+        currentOutput += (' ' + word);
 
     var nextWord = generateNextWordForWord(word);
     return generateMarkovOutputWithWord(nextWord, currentOutput);
+}
+
+exports.generate = function(corpusFilename, startingWords, maxLengthChar, callback) {
+    fs.readFile(corpusFilename, 'utf8', function(err, data) {
+        if (err) throw err;
+
+        categoriseWords(splitContentToWords(data));
+        var startingLastWordArray = startingWords.split(" ");
+        var startingLastWord = startingLastWordArray[startingLastWordArray.length - 1].toLowerCase();
+
+        callback(generateMarkovOutputWithWord(startingLastWord, '', maxLengthChar));
+    });
 }
