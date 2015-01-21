@@ -1,5 +1,7 @@
 # markov-chain-text-generator
-Node implementation of a Markov Chain Text Generator. Given a corpus, will generate a sentence in the style of the text based on a leading word.
+Node implementation of a Markov Chain Text Generator. 
+
+Given a corpus, will generate a sentence in the style of the text based on a leading word.
 
 Usage:
 ```javascript
