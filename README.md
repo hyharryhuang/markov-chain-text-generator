@@ -1,2 +1,2 @@
 # markov-chain-text-generator
-Javascript implementation of a Markov Chain Text Generator.
+Node implementation of a Markov Chain Text Generator.
