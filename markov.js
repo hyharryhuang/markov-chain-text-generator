@@ -6,7 +6,6 @@ function splitContentToWords(content) {
     var words = content
               // .replace(/[.,?!;()"'-]/g, " ") //replace all punctuation with spaces
               .replace(/\s+/g, " ") //condense spaces
-              .toLowerCase() //lowercase, so we group same-case words together
               .split(" "); 
 
     return words;
@@ -15,8 +14,10 @@ function splitContentToWords(content) {
 function categoriseWords(words) {
 
 	for(var i = 0; i < words.length; i++) {
-		if(categorisedWords[words[i]] === undefined) {
-			categorisedWords[words[i]] = [];
+        var lowercaseWord = words[i].toLowerCase(); //store word lowercase so we can do a case insensitive match later on.
+
+		if(categorisedWords[lowercaseWord] === undefined) {
+			categorisedWords[lowercaseWord] = [];
 		}
 
 		var wordAfterIndex = i + 1;
@@ -24,14 +25,16 @@ function categoriseWords(words) {
 		if(wordAfterIndex < words.length) {
 			var wordAfter = words[wordAfterIndex];
 
-            categorisedWords[words[i]].push(wordAfter);
+            categorisedWords[lowercaseWord].push(wordAfter);
 		}
 	}
 }
 
 function generateNextWordForWord(word) {
-    if(categorisedWords[word] !== undefined && categorisedWords[word].length > 0) {
-        var possibleNextWords = categorisedWords[word];
+    var lowercaseWord = word.toLowerCase();
+
+    if(categorisedWords[lowercaseWord] !== undefined && categorisedWords[lowercaseWord].length > 0) {
+        var possibleNextWords = categorisedWords[lowercaseWord];
         return possibleNextWords[Math.floor(Math.random() * possibleNextWords.length)];
     } else
         return '';
@@ -56,7 +59,7 @@ exports.generate = function(corpusFilename, startingWords, maxLengthChar, callba
 
         categoriseWords(splitContentToWords(data));
         var startingLastWordArray = startingWords.split(" ");
-        var startingLastWord = startingLastWordArray[startingLastWordArray.length - 1].toLowerCase();
+        var startingLastWord = startingLastWordArray[startingLastWordArray.length - 1];
 
         callback(generateMarkovOutputWithWord(startingLastWord, '', maxLengthChar));
     });
